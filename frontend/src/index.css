@@ -1,0 +1,69 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-zinc-50 text-zinc-900 font-sans antialiased;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-zinc-900 text-white px-5 py-2.5 rounded-xl font-bold hover:bg-black transition-all shadow-lg active:scale-95 uppercase tracking-widest text-xs;
+  }
+  
+  .btn-secondary {
+    @apply bg-white border border-zinc-200 text-zinc-600 px-4 py-2 rounded-xl font-bold hover:bg-zinc-50 transition-all shadow-sm uppercase tracking-widest text-xs;
+  }
+  
+  .btn-danger {
+    @apply bg-rose-600 text-white px-4 py-2 rounded-xl font-bold hover:bg-rose-700 transition-colors shadow-lg uppercase tracking-widest text-xs;
+  }
+  
+  .card {
+    @apply bg-white rounded-2xl shadow-sm border border-zinc-200 overflow-hidden;
+  }
+  
+  .input-field {
+    @apply w-full px-4 py-2.5 bg-zinc-50 border border-zinc-200 text-zinc-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-zinc-900 focus:border-zinc-900 transition-all placeholder-zinc-400 font-medium;
+  }
+  
+  .label-text {
+    @apply block text-[10px] font-black text-zinc-500 mb-2 uppercase tracking-[0.2em];
+  }
+
+  /* Table styles */
+  .table-header {
+    @apply px-6 py-4 bg-zinc-50/80 backdrop-blur-sm text-left text-[10px] font-black text-zinc-500 uppercase tracking-[0.15em] border-b border-zinc-100;
+  }
+  
+  .table-cell {
+    @apply px-6 py-4 whitespace-nowrap text-sm text-zinc-600 border-b border-zinc-50 font-medium;
+  }
+}
+
+/* Glassmorphism utilities */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+/* Print styles */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #printable-receipt, #printable-receipt * {
+    visibility: visible;
+  }
+  #printable-receipt {
+    position: absolute;
+    left: 0;
+    top: 0;
+  }
+}
