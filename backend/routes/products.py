@@ -1,9 +1,11 @@
 """
 Product management routes - Products, stocks, and rate changes
 """
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, UploadFile, File
 from typing import Optional, List
 from datetime import datetime
+import pandas as pd
+import io
 from bson import ObjectId
 from models.product import ProductCreate, ProductUpdate, RateChangeRequest
 from utils.calculations import calculate_closing_stock, calculate_rates
@@ -167,3 +169,98 @@ async def get_pending_rate_changes():
         change["_id"] = str(change["_id"])
         changes.append(change)
     return changes
+
+
+@router.post("/bulk-import")
+async def bulk_import_products(file: UploadFile = File(...)):
+    db = get_db()
+    
+    contents = await file.read()
+    if file.filename.endswith('.csv'):
+        df = pd.read_csv(io.BytesIO(contents))
+    elif file.filename.endswith(('.xls', '.xlsx')):
+        df = pd.read_excel(io.BytesIO(contents))
+    else:
+        raise HTTPException(status_code=400, detail="Invalid file format. Please upload CSV or Excel.")
+
+    # Standardize column names
+    df.columns = [c.lower().replace(' ', '_').strip() for c in df.columns]
+    
+    # Required columns mapping
+    column_mapping = {
+        'brand': ['brand', 'company', 'make'],
+        'product_name': ['product_name', 'description', 'item', 'name', 'product'],
+        'purchase_rate': ['purchase_rate', 'buy_price', 'p_rate', 'cost'],
+        'wholesale_rate': ['wholesale_rate', 'w_rate', 'wholesale'],
+        'retail_rate': ['retail_rate', 'r_rate', 'retail', 'mrp'],
+        'opening_stock': ['opening_stock', 'stock', 'qty', 'quantity', 'initial_stock']
+    }
+
+    final_df = pd.DataFrame()
+    for target, alternates in column_mapping.items():
+        found = False
+        for alt in alternates:
+            if alt in df.columns:
+                final_df[target] = df[alt]
+                found = True
+                break
+        if not found:
+            # For rates and stock, default to 0 if not found
+            if target in ['purchase_rate', 'wholesale_rate', 'retail_rate', 'opening_stock']:
+                final_df[target] = 0
+            else:
+                raise HTTPException(status_code=400, detail=f"Missing required column: {target}")
+
+    # Fill NaNs
+    final_df = final_df.fillna({
+        'purchase_rate': 0,
+        'wholesale_rate': 0,
+        'retail_rate': 0,
+        'opening_stock': 0
+    })
+
+    imported_count = 0
+    skipped_count = 0
+    
+    for _, row in final_df.iterrows():
+        # Clean data
+        brand = str(row['brand']).strip()
+        product_name = str(row['product_name']).strip()
+        
+        if not brand or not product_name:
+            skipped_count += 1
+            continue
+
+        # Check if exists
+        existing = await db.products.find_one({"product_name": product_name, "brand": brand})
+        if existing:
+            skipped_count += 1
+            continue
+
+        # Prepare document
+        doc = {
+            "brand": brand,
+            "product_name": product_name,
+            "purchase_rate": float(row['purchase_rate']),
+            "wholesale_rate": float(row['wholesale_rate']),
+            "retail_rate": float(row['retail_rate']),
+            "opening_stock": float(row['opening_stock']),
+            "purchased_stock": 0,
+            "sold_stock": 0,
+            "margin1": 0,
+            "margin2": 0,
+            "purchase_date": datetime.now().strftime("%Y-%m-%d"),
+            "modified_date": datetime.now().strftime("%Y-%m-%d")
+        }
+        
+        # Calculate closing stock
+        doc["closing_stock"] = doc["opening_stock"]
+        
+        await db.products.insert_one(doc)
+        imported_count += 1
+
+    return {
+        "message": "Bulk import completed",
+        "imported": imported_count,
+        "skipped": skipped_count
+    }

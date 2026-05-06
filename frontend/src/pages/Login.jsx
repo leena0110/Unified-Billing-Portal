@@ -52,7 +52,7 @@ const Login = () => {
 
           <form onSubmit={handleSubmit} className="space-y-8">
             <div>
-              <label className="block text-[10px] font-black text-zinc-400 uppercase tracking-widest mb-3 ml-1">Identity Ref.</label>
+              <label className="block text-[10px] font-black text-zinc-400 uppercase tracking-widest mb-3 ml-1">Username</label>
               <div className="relative group">
                 <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
                   <User className="h-4 w-4 text-zinc-300 group-focus-within:text-zinc-900 transition-colors" />
@@ -62,14 +62,14 @@ const Login = () => {
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   className="pl-14 input-field py-4 bg-zinc-50 border-zinc-100 focus:ring-2 focus:ring-black focus:bg-white transition-all font-black tracking-widest text-[10px]"
-                  placeholder="admin_root"
+                  placeholder="Enter username"
                   required
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-[10px] font-black text-zinc-400 uppercase tracking-widest mb-3 ml-1">Access Token</label>
+              <label className="block text-[10px] font-black text-zinc-400 uppercase tracking-widest mb-3 ml-1">Password</label>
               <div className="relative group">
                 <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
                   <Lock className="h-4 w-4 text-zinc-300 group-focus-within:text-zinc-900 transition-colors" />
@@ -90,7 +90,7 @@ const Login = () => {
               disabled={loading}
               className="w-full btn-primary py-5 mt-10 shadow-2xl active:scale-95 transition-all"
             >
-              {loading ? 'Validating Credentials...' : 'Authenticate Access'}
+              {loading ? 'Logging in...' : 'Login'}
             </button>
           </form>
         </div>

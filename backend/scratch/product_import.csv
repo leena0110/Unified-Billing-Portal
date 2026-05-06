@@ -1,0 +1,57 @@
+Brand,Product Name,Purchase Rate,Wholesale Rate,Retail Rate,Opening Stock
+Anchor,1 Way Switch,25,30,35,100
+Anchor,2 Way Switch,35,42,48,80
+Anchor,6A Socket,30,36,42,60
+Anchor,16A Socket,55,65,75,40
+Anchor,Bell Push Switch,28,34,40,50
+Anchor,5 Pin Socket,45,54,62,30
+Anchor,Bed Switch,20,24,28,100
+Anchor,Piano Switch,40,48,55,40
+Havells,6A MCB SP,120,144,165,50
+Havells,16A MCB SP,130,156,180,50
+Havells,32A MCB SP,150,180,210,30
+Havells,63A MCB DP,450,540,620,15
+Havells,40A ELCB DP,850,1020,1175,10
+Havells,RCCB 40A 4P,1800,2160,2480,8
+Havells,LED Bulb 9W,75,90,105,200
+Havells,LED Bulb 12W,95,114,132,150
+Havells,LED Bulb 15W,110,132,152,100
+Havells,LED Tube Light 20W,160,192,220,80
+Havells,LED Panel Light 12W,280,336,385,30
+Havells,Ceiling Fan,1200,1440,1650,20
+Finolex,1mm Wire 90m,1100,1320,1520,25
+Finolex,1.5mm Wire 90m,1550,1860,2140,25
+Finolex,2.5mm Wire 90m,2400,2880,3310,15
+Finolex,4mm Wire 90m,3800,4560,5240,10
+Finolex,6mm Wire 90m,5500,6600,7590,8
+Finolex,PVC Pipe 20mm,45,54,62,100
+Finolex,PVC Pipe 25mm,55,66,76,80
+Finolex,PVC Pipe 32mm,75,90,104,50
+Polycab,1mm Wire 90m,1050,1260,1450,20
+Polycab,1.5mm Wire 90m,1500,1800,2070,20
+Polycab,2.5mm Wire 90m,2350,2820,3240,12
+Polycab,4mm Wire 90m,3700,4440,5100,8
+Wipro,LED Bulb 9W,70,84,97,150
+Wipro,LED Bulb 12W,90,108,125,100
+Wipro,LED Downlight 6W,180,216,250,40
+Wipro,LED Downlight 12W,280,336,386,30
+Wipro,LED Street Light 30W,1200,1440,1650,10
+Legrand,Modular Switch 1M,35,42,48,80
+Legrand,Modular Switch 2M,55,66,76,60
+Legrand,USB Socket,250,300,345,20
+Legrand,Modular Plate 1M,18,22,25,100
+Legrand,Modular Plate 2M,25,30,35,100
+Legrand,Modular Plate 3M,30,36,42,80
+Legrand,Modular Plate 4M,40,48,55,60
+GM,Extension Board 4+1,320,384,440,30
+GM,Extension Board 6+1,420,504,580,20
+GM,Spike Guard 4 Socket,450,540,620,15
+Anchor,Ceiling Rose,8,10,12,200
+Anchor,Junction Box,15,18,21,100
+Anchor,PVC Casing 25mm,22,26,30,150
+Anchor,PVC Casing 32mm,30,36,42,100
+Anchor,Electrical Tape,12,14,16,300
+Hardwire,Nail Clip 10mm,2,3,4,500
+Hardwire,Nail Clip 16mm,3,4,5,400
+Hardwire,Gitti 2mm,1,2,3,1000
+Hardwire,Wall Plug 8mm,1,2,3,1000

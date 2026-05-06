@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Package, Search, Plus, Filter, Edit, Trash2 } from 'lucide-react';
+import { Package, Search, Plus, Filter, Edit, Trash2, Upload, FileDown } from 'lucide-react';
 import api from '@/api/axios';
 
 const Inventory = () => {
@@ -74,10 +74,7 @@ const Inventory = () => {
     const val = parseFloat(value) || 0;
     setNewProduct(prev => {
       const updates = { ...prev, [field]: val };
-      if (field === 'purchase_rate') {
-        updates.wholesale_rate = val;
-        updates.retail_rate = Math.round(val * 1.1);
-      } else if (field === 'wholesale_rate') {
+      if (field === 'wholesale_rate') {
         updates.retail_rate = Math.round(val * 1.1);
       }
       return updates;
@@ -137,14 +134,46 @@ const Inventory = () => {
     const val = parseFloat(value) || 0;
     setEditingProduct(prev => {
       const updates = { ...prev, [field]: val };
-      if (field === 'purchase_rate') {
-        updates.wholesale_rate = val;
-        updates.retail_rate = Math.round(val * 1.1);
-      } else if (field === 'wholesale_rate') {
+      if (field === 'wholesale_rate') {
         updates.retail_rate = Math.round(val * 1.1);
       }
       return updates;
     });
+  };
+
+  const handleBulkUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      setLoading(true);
+      const { data } = await api.post('/products/bulk-import', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      alert(`Import Successful!\nImported: ${data.imported}\nSkipped: ${data.skipped}`);
+      fetchProducts();
+      fetchBrands();
+    } catch (error) {
+      console.error("Bulk import failed", error);
+      alert("Failed to import products. Check file format.");
+    } finally {
+      setLoading(false);
+      e.target.value = ''; // Reset input
+    }
+  };
+
+  const downloadTemplate = () => {
+    const headers = "Brand,Product Name,Purchase Rate,Wholesale Rate,Retail Rate,Opening Stock\n";
+    const sample = "Anchor,1 Way Switch,20,25,30,100\n";
+    const blob = new Blob([headers + sample], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'product_import_template.csv';
+    a.click();
   };
 
   return (
@@ -158,6 +187,15 @@ const Inventory = () => {
           <p className="text-zinc-400 mt-1 font-bold uppercase tracking-[0.2em] text-[10px]">Product catalog and inventory management</p>
         </div>
         <div className="flex space-x-3">
+          <button onClick={downloadTemplate} className="bg-white border border-zinc-200 text-zinc-400 hover:text-zinc-900 px-4 py-2.5 rounded-xl font-black uppercase tracking-widest text-[9px] transition-all flex items-center">
+            <FileDown className="w-4 h-4 mr-2" />
+            Template
+          </button>
+          <label className="bg-zinc-100 hover:bg-zinc-200 text-zinc-600 px-6 py-2.5 rounded-xl font-black uppercase tracking-widest text-[10px] shadow-sm transition-all flex items-center cursor-pointer">
+            <Upload className="w-4 h-4 mr-2" />
+            Bulk Import
+            <input type="file" className="hidden" accept=".csv,.xlsx,.xls" onChange={handleBulkUpload} />
+          </label>
           <button onClick={() => setIsModalOpen(true)} className="bg-black hover:bg-zinc-800 text-white px-6 py-2.5 rounded-xl font-black uppercase tracking-widest text-[10px] shadow-xl transition-all flex items-center">
             <Plus className="w-4 h-4 mr-2" />
             Add Product
