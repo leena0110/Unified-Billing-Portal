@@ -9,7 +9,7 @@
   "orientation": "any",
   "icons": [
     {
-      "src": "/favicon.svg",
+      "src": "/rite-icon.svg",
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any"
