@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Receipt, Search, Calendar, Printer, MessageCircle, FileText } from 'lucide-react';
+import { Receipt, Search, Calendar, Printer, MessageCircle, FileText, Image } from 'lucide-react';
 import api from '@/api/axios';
+import html2canvas from 'html2canvas';
+import ThermalReceipt from '@/components/ThermalReceipt';
 
 const SalesSummary = () => {
   const [bills, setBills] = useState([]);
@@ -11,6 +13,7 @@ const SalesSummary = () => {
     date_to: '',
     payment_type: ''
   });
+  const [activeBill, setActiveBill] = useState(null);
 
   useEffect(() => {
     fetchBills();
@@ -35,17 +38,73 @@ const SalesSummary = () => {
   };
 
   const handlePrint = (billId) => {
-    window.open(`${api.defaults.baseURL}/bills/${billId}/pdf`, '_blank');
+    const bill = bills.find(b => b._id === billId);
+    if (bill) {
+      setActiveBill(bill);
+      setTimeout(() => {
+        window.print();
+      }, 100);
+    }
+  };
+
+  const handleSaveImage = (billId) => {
+    const bill = bills.find(b => b._id === billId);
+    if (bill) {
+      setActiveBill(bill);
+      setTimeout(async () => {
+        try {
+          const element = document.getElementById('printable-receipt-content');
+          if (element) {
+            const canvas = await html2canvas(element, { scale: 3 });
+            const image = canvas.toDataURL("image/png", 1.0);
+            const link = document.createElement('a');
+            link.download = `Bill_${bill.bill_no}.png`;
+            link.href = image;
+            link.click();
+          }
+        } catch (error) {
+          alert('Error generating image');
+        }
+      }, 100);
+    }
   };
 
   const handleWhatsApp = async (billId) => {
-    try {
-      const { data } = await api.get(`/bills/${billId}/receipt-text`);
-      const phone = data.phone.startsWith('91') ? data.phone : '91' + data.phone.replace(/\D/g, '');
-      window.open(`https://web.whatsapp.com/send?phone=${phone}&text=${encodeURIComponent(data.text)}`, '_blank');
-    } catch (e) {
-      alert('Error fetching receipt text');
-    }
+    const bill = bills.find(b => b._id === billId);
+    if (!bill) return;
+    
+    setActiveBill(bill);
+    setTimeout(async () => {
+      try {
+        const element = document.getElementById('printable-receipt-content');
+        if (element) {
+          const canvas = await html2canvas(element, { scale: 2 });
+          canvas.toBlob(async (blob) => {
+            const phone = bill.customer_phone?.startsWith('91') ? bill.customer_phone : '91' + (bill.customer_phone || '').replace(/\D/g, '');
+            
+            try {
+              await navigator.clipboard.write([
+                new ClipboardItem({ [blob.type]: blob })
+              ]);
+              alert("Image copied! Opening chat... Just PASTE (Ctrl+V) to send the bill.");
+              window.open(`https://wa.me/${phone}`, '_blank');
+            } catch (err) {
+              console.error('Failed to copy to clipboard', err);
+              const image = canvas.toDataURL("image/png", 1.0);
+              const link = document.createElement('a');
+              link.download = `Receipt_${bill.bill_no}.png`;
+              link.href = image;
+              link.click();
+              alert("Image downloaded! Opening chat... Please attach the downloaded file.");
+              window.open(`https://wa.me/${phone}`, '_blank');
+            }
+          });
+        }
+      } catch (error) {
+        console.error('Error generating receipt image', error);
+        alert('Could not generate receipt image.');
+      }
+    }, 100);
   };
 
   return (
@@ -130,6 +189,9 @@ const SalesSummary = () => {
                         <button onClick={() => handlePrint(bill._id)} className="p-2 bg-zinc-100 hover:bg-zinc-900 hover:text-white rounded-lg transition-all" title="Print Receipt">
                           <Printer className="w-4 h-4" />
                         </button>
+                        <button onClick={() => handleSaveImage(bill._id)} className="p-2 bg-zinc-100 hover:bg-zinc-900 hover:text-white rounded-lg transition-all" title="Save as Image">
+                          <Image className="w-4 h-4" />
+                        </button>
                         <button onClick={() => handleWhatsApp(bill._id)} className="p-2 bg-green-50 text-green-600 hover:bg-green-600 hover:text-white rounded-lg transition-all" title="Share via WhatsApp">
                           <MessageCircle className="w-4 h-4" />
                         </button>
@@ -140,6 +202,15 @@ const SalesSummary = () => {
               )}
             </tbody>
           </table>
+        </div>
+      </div>
+
+      {/* Printable Receipt (Hidden on Screen) */}
+      <div className="absolute -left-[9999px] top-0 print:left-0 print:relative">
+        <div id="printable-receipt">
+          <div id="printable-receipt-content" className="bg-white">
+            <ThermalReceipt billData={activeBill} />
+          </div>
         </div>
       </div>
     </div>

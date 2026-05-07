@@ -1,5 +1,5 @@
 import React from 'react';
-import { LogOut, Bell, Search } from 'lucide-react';
+import { LogOut, Bell, Search, CheckCircle2 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 
 const Header = () => {
@@ -7,13 +7,24 @@ const Header = () => {
 
   return (
     <header className="bg-white h-16 border-b border-zinc-200 flex items-center justify-between px-6 shadow-sm z-10">
-      <div className="flex items-center bg-zinc-50 px-4 py-2.5 rounded-xl w-96 border border-zinc-100 focus-within:border-zinc-900 transition-all">
-        <Search className="w-5 h-5 text-zinc-300" />
-        <input 
-          type="text" 
-          placeholder="GLOBAL SEARCH" 
-          className="bg-transparent border-none outline-none ml-3 w-full text-[10px] font-black tracking-widest placeholder-zinc-300 text-zinc-900 uppercase"
-        />
+      <div className="flex items-center space-x-8">
+        <div className="flex items-center space-x-3 group cursor-default">
+          <div className="bg-black p-1.5 rounded-lg shadow-lg group-hover:rotate-12 transition-transform duration-500">
+            <CheckCircle2 className="w-4 h-4 text-white" strokeWidth={3} />
+          </div>
+          <h1 className="text-sm font-black tracking-[0.2em] uppercase">
+            Rite <span className="text-zinc-400">Electricals</span>
+          </h1>
+        </div>
+
+        <div className="flex items-center bg-zinc-50 px-4 py-2.5 rounded-xl w-80 border border-zinc-100 focus-within:border-zinc-900 transition-all">
+          <Search className="w-5 h-5 text-zinc-300" />
+          <input 
+            type="text" 
+            placeholder="GLOBAL SEARCH" 
+            className="bg-transparent border-none outline-none ml-3 w-full text-[10px] font-black tracking-widest placeholder-zinc-300 text-zinc-900 uppercase"
+          />
+        </div>
       </div>
       
       <div className="flex items-center space-x-4">

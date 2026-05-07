@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
-import { LogOut, User, ChevronDown } from 'lucide-react';
+import { LogOut, User, ChevronDown, CheckCircle2 } from 'lucide-react';
 
 const Navbar = () => {
   const { user, logout } = useAuth();
@@ -72,6 +72,15 @@ const Navbar = () => {
   return (
     <nav className="bg-white border-b border-zinc-200 shadow-sm flex items-center justify-between px-6 h-12 z-50">
       <div className="flex items-center h-full">
+        <div className="flex items-center space-x-3 mr-8 group cursor-pointer" onClick={() => window.location.href = '/'}>
+          <div className="bg-white border border-zinc-200 p-1 rounded-lg shadow-sm group-hover:rotate-12 transition-transform duration-500">
+            <CheckCircle2 className="w-3.5 h-3.5 text-black" strokeWidth={3} />
+          </div>
+          <h1 className="text-[11px] font-black tracking-[0.2em] uppercase">
+            Rite <span className="text-zinc-400">Electricals</span>
+          </h1>
+        </div>
+        
         {menuItems.map((item) => (
           <div 
             key={item.name}
