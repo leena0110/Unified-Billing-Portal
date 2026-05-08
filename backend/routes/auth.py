@@ -13,9 +13,22 @@ router = APIRouter(prefix="/api/auth", tags=["Authentication"])
 async def login(user_data: UserLogin):
     """Authenticate user and return JWT token"""
     db = get_db()
-    user = await db.users.find_one({"username": user_data.username})
+    username = user_data.username.strip().lower()
+    password = user_data.password.strip()
     
-    if not user or not verify_password(user_data.password, user["password"]):
+    print(f"Login attempt for username: '{username}'")
+    
+    user = await db.users.find_one({"username": username})
+    
+    if not user:
+        print(f"User '{username}' not found in database")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid username or password"
+        )
+        
+    if not verify_password(password, user["password"]):
+        print(f"Password verification failed for user '{username}'")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid username or password"
